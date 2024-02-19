@@ -21,6 +21,45 @@
  */
 
 #include "log.h"
+enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL };
+void log_trace(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  log_log(LOG_TRACE, __FILE__, __LINE__, &fmt, args);
+  va_end(args);
+}
+void log_debug(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  log_log(LOG_DEBUG, __FILE__, __LINE__, &fmt, args);
+  va_end(args);
+}
+void log_info(const char *file, int line,const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  log_log(LOG_INFO, file,line,&fmt, args);
+  va_end(args);
+}
+void log_warn(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  log_log(LOG_WARN, __FILE__, __LINE__, &fmt, args);
+  va_end(args);
+}
+void log_error(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);;
+  log_log(LOG_ERROR, __FILE__, __LINE__, &fmt, args);;
+  va_end(args);;
+}
+void log_fatal(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  log_log(LOG_FATAL, __FILE__, __LINE__, &fmt, args);
+  va_end(args);
+}
+
+
 
 #define MAX_CALLBACKS 32
 
@@ -137,19 +176,18 @@ static void init_event(log_Event *ev, void *udata) {
 }
 
 
-void log_log(int level, const char *file, int line, const char *fmt, ...) {
+void log_log(int level, const char *file, int line, const char **fmt, va_list vap) {
   log_Event ev = {
-    .fmt   = fmt,
+    .fmt   = *fmt,
     .file  = file,
     .line  = line,
     .level = level,
   };
 
   lock();
-
   if (!L.quiet && level >= L.level) {
     init_event(&ev, stderr);
-    va_start(ev.ap, fmt);
+    va_copy(ev.ap, vap);
     stdout_callback(&ev);
     va_end(ev.ap);
   }
@@ -158,7 +196,7 @@ void log_log(int level, const char *file, int line, const char *fmt, ...) {
     Callback *cb = &L.callbacks[i];
     if (level >= cb->level) {
       init_event(&ev, cb->udata);
-      va_start(ev.ap, fmt);
+      va_copy(ev.ap, vap);
       cb->fn(&ev);
       va_end(ev.ap);
     }
