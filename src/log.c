@@ -21,41 +21,40 @@
  */
 
 #include "log.h"
-enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL };
-void log_trace(const char *fmt, ...) {
+void log_trace(const char *file, int line,const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  log_log(LOG_TRACE, __FILE__, __LINE__, &fmt, args);
+  log_log(LOGC_TRACE, file, line, &fmt, args);
   va_end(args);
 }
-void log_debug(const char *fmt, ...) {
+void log_debug(const char *file, int line,const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  log_log(LOG_DEBUG, __FILE__, __LINE__, &fmt, args);
+  log_log(LOGC_DEBUG, file, line, &fmt, args);
   va_end(args);
 }
 void log_info(const char *file, int line,const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  log_log(LOG_INFO, file,line,&fmt, args);
+  log_log(LOGC_INFO, file,line,&fmt, args);
   va_end(args);
 }
-void log_warn(const char *fmt, ...) {
+void log_warn(const char *file, int line,const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  log_log(LOG_WARN, __FILE__, __LINE__, &fmt, args);
+  log_log(LOGC_WARN, file, line, &fmt, args);
   va_end(args);
 }
-void log_error(const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);;
-  log_log(LOG_ERROR, __FILE__, __LINE__, &fmt, args);;
-  va_end(args);;
-}
-void log_fatal(const char *fmt, ...) {
+void log_error(const char *file, int line,const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
-  log_log(LOG_FATAL, __FILE__, __LINE__, &fmt, args);
+  log_log(LOGC_ERROR, file, line, &fmt, args);
+  va_end(args);
+}
+void log_fatal(const char *file, int line,const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  log_log(LOGC_FATAL, file, line, &fmt, args);
   va_end(args);
 }
 
