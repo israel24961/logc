@@ -37,7 +37,11 @@ void log_error(const char *file, int line, const char *fmt, ...) __attribute__((
 void log_fatal(const char *file, int line, const char *fmt, ...) __attribute__((format(printf, 3, 4)));
 
 #define L(...) log_info(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
+#ifdef DEBUG
 #define Ld(...) log_debug(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
+#else
+#define Ld(...)
+#endif
 #define Lw(...) log_warn(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
 #define Le(...) log_error(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
 #define Lf(...) log_fatal(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
